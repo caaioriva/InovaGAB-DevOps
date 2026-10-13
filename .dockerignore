@@ -1,0 +1,10 @@
+.git
+.github
+.idea
+.vscode
+.DS_Store
+**/.DS_Store
+target
+.env
+*.log
+__MACOSX

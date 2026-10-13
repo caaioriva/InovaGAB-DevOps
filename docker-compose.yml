@@ -1,0 +1,46 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: inovagab-mongodb
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - inovagab-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inovagab-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-inovagab}
+      JWT_SECRET: ${JWT_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      PORT: ${PORT:-8080}
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - inovagab-network
+
+volumes:
+  mongo_data:
+    name: inovagab-mongo-data
+
+networks:
+  inovagab-network:
+    name: inovagab-network
+    driver: bridge
