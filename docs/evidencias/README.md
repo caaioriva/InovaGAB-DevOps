@@ -11,3 +11,4 @@ Sugestão de nomes:
 - `05-producao-health.png`
 
 Não use imagens simuladas. Os prints devem corresponder às execuções reais do GitHub Actions e aos ambientes publicados.
+staging test
